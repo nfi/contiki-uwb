@@ -14,5 +14,6 @@
 void lcd_init(void);
 void lcd_write(uint32_t len, uint8_t rs_enable, const uint8_t *buf);
 void lcd_display_str(const char *str);
+void lcd_display_str2(const char *str);
 /*---------------------------------------------------------------------------*/
 #endif /* LCD_H_ */

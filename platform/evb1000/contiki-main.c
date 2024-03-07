@@ -176,11 +176,11 @@ main(void)
   serial_line_init();
   fade_leds();
 
-  char str[20];
+  char str[28];
 #if (LINKADDR_SIZE == 2)
-  snprintf(str, 20, "%02x%02x", linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1]);
+  snprintf(str, sizeof(str), "Contiki %02x%02x", linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1]);
 #else
-  snprintf(str, 20, "%02x%02x%02x%02x%02x%02x%02x%02x", 
+  snprintf(str, sizeof(str), "Contiki %02x%02x%02x%02x%02x%02x%02x%02x",
       linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
       linkaddr_node_addr.u8[2], linkaddr_node_addr.u8[3],
       linkaddr_node_addr.u8[4], linkaddr_node_addr.u8[5],

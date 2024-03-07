@@ -88,6 +88,20 @@ lcd_display_str(const char *str)
 }
 /*---------------------------------------------------------------------------*/
 void
+lcd_display_str2(const char *str)
+{
+
+  uint8_t cmd;
+
+  /* Return cursor home and clear screen. */
+  cmd = 0xC0;
+  lcd_write(1, 0, &cmd);
+
+  /* Write the string to display. */
+  lcd_write(strlen(str), 1, (const uint8_t *)str);
+}
+/*---------------------------------------------------------------------------*/
+void
 lcd_init(void)
 {
   SPI_InitTypeDef spi2_conf;
