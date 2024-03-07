@@ -33,6 +33,7 @@
 #include "lib/random.h"
 #include "net/rime/rime.h"
 #include "leds.h"
+#include "lcd.h"
 #include "net/netstack.h"
 #include <stdio.h>
 #include "dw1000.h"
@@ -46,7 +47,8 @@ AUTOSTART_PROCESSES(&range_process);
 #define RANGING_TIMEOUT (CLOCK_SECOND / 10)
 /*---------------------------------------------------------------------------*/
 #if LINKADDR_SIZE == 2
-linkaddr_t dst = {{0x5a, 0x34}};
+//linkaddr_t dst = {{0x5a, 0x34}};
+linkaddr_t dst = {{0x08, 0xc1}};
 #elif LINKADDR_SIZE == 8
 linkaddr_t dst = {{0x01, 0x3a, 0x61, 0x02, 0xc4, 0x40, 0x5a, 0x34}};
 #endif
@@ -56,6 +58,7 @@ PROCESS_THREAD(range_process, ev, data)
   static struct etimer et;
   static struct etimer timeout;
   static int status;
+  static char buf[64];
 
   PROCESS_BEGIN();
 
@@ -85,12 +88,19 @@ PROCESS_THREAD(range_process, ev, data)
         PROCESS_YIELD_UNTIL((ev == ranging_event || etimer_expired(&timeout)));
         if(etimer_expired(&timeout)) {
           printf("R TIMEOUT\n");
+          lcd_display_str("Range timeout!");
         } else if(((ranging_data_t *)data)->status) {
           ranging_data_t *d = data;
           printf("R success: %d bias %d\n", (int)(100*d->raw_distance), (int)(100*d->distance));
+          snprintf(buf, sizeof(buf) - 1, "Range %3d", (int)(100*d->distance));
+          lcd_display_str(buf);
         } else {
           printf("R FAIL\n");
+          lcd_display_str("Range failed!");
         }
+        snprintf(buf, sizeof(buf) - 1, "Contiki %02x%02x",
+                 linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1]);
+        lcd_display_str2(buf);
       }
       etimer_set(&et, CLOCK_SECOND / 50);
       PROCESS_WAIT_UNTIL(etimer_expired(&et));
